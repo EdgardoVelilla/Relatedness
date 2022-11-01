@@ -1,5 +1,17 @@
-
-# Convert a full pedigree into a family pedigree keeping key links between families across generations
+#################################################################################################################################
+#'                                                                                                                             '#
+#'                                                                                                                             '#
+#' pedFam function                                                                                                             '#
+#'                                                                                                                             '#
+#' Author: Edgardo Velilla P.                                                                                                  '#
+#' email{edgardo.velilla@cmpc.cl}                                                                                              '#
+#' Created: 31-Ago-2022                                                                                                        '#
+#'                                                                                                                             '#
+#' General description:                                                                                                        '#
+#'                                                                                                                             '#
+#' Convert a full pedigree into a family pedigree keeping key links between families across generations                        '#
+#'                                                                                                                             '#  
+#################################################################################################################################
 
 pedFam <- function(pedigree) {
 library("data.table")
@@ -23,17 +35,17 @@ library("data.table")
  # function to prune the pedigree but retaining the ancestors of specified subset of trees
    cutPed <- function(pedigree, keep){	
      ped.tmp <- copy(pedigree)
-	 id.keep <- keep
+     id.keep <- keep
      n.id <- length(id.keep) + 1L
        while(length(id.keep)!= n.id){
          n.id <- length(id.keep)
          id.keep <- union(na.omit(c(unlist(ped.tmp[, 
-		   .(mum, dad)][match(id.keep, 
-		   ped.tmp[, TreeID]), ]))), id.keep)
+		      .(mum, dad)][match(id.keep, 
+		      ped.tmp[, TreeID]), ]))), id.keep)
        }
      ped.tmp <- ped.tmp[sort(match(id.keep, 
-	   ped.tmp[, TreeID])), ]
-	 ped.tmp <- gen.add(ped.tmp)
+	        ped.tmp[, TreeID])), ]
+	        ped.tmp <- gen.add(ped.tmp)
 	ped.tmp[]
    }
  pedfam0 <- cutPed(pedigree, keep)
@@ -69,7 +81,7 @@ library("data.table")
  
  pedfam <- rbind(pedfam0[mum==0L & dad==0L, c(1L:3L)], 
                  pedfam.sel[, c(1L:3L)],
-				 ped.parents[, c(1L:3L)])			 
+		 ped.parents[, c(1L:3L)])			 
  pedfam <- gen.add(pedfam)
  setorder(pedfam, gen)
 pedfam[]
