@@ -6,7 +6,6 @@
 #' Author: Edgardo Velilla P.                                                                                                                                                                  '#
 #' email{edgardo.velilla@cmpc.cl}                                                                                                                                                              '#
 #' Created: 31-Ago-2022                                                                                                                                                                        '#
-#' License: GPLv3                                                                                                                                                                              '#
 #'                                                                                                                                                                                             '#
 #' General description                                                                                                                                                                         '#
 #'                                                                                                                                                                                             '#
@@ -123,7 +122,7 @@ Di <- (with(output,
 	   j=idy,                                            
 	   x=J1,                                             
 	   dims=c(m, m),                                     
-       dimnames = list(pedigree[[1]],                            
+           dimnames = list(pedigree[[1]],                            
 	   pedigree[[1]]),                                   
 	   triangular = FALSE,                               
 	   check = TRUE)))                                   
@@ -147,7 +146,7 @@ ADi <- (with(output,
 		j=idy,                                       
 		x= 4*J1 + J3 + J5,                           
 		dims=c(m, m),                                
-        dimnames = list(pedigree[[1]],                           
+                dimnames = list(pedigree[[1]],                           
 		pedigree[[1]]),                              
 		triangular = FALSE,                          
 		check = TRUE)))                              
@@ -175,7 +174,7 @@ ID <- (with(output,
 	   j=idy,                                            
 	   x= J1 + J2 - fx*fy,                               
 	   dims=c(m, m),                                     
-       dimnames = list(pedigree[[1]],                            
+           dimnames = list(pedigree[[1]],                            
 	   pedigree[[1]]),                                   
 	   triangular = FALSE,                               
 	   check = TRUE)))                                   
@@ -185,16 +184,16 @@ IDs <- forceSymmetric(
 	   p=ID@p,                                           
 	   Dim=ID@Dim,                                       
 	   x=ID@x,                                           
-       Dimnames=list(ID@Dimnames[[1]],                           
+           Dimnames=list(ID@Dimnames[[1]],                           
 	   ID@Dimnames[[2]])))                           
 IDs <- drop0(IDs, tol = 1e-15,                   
 		    is.Csparse = NA) 		           
 		  
   return(list(A=As, 
-		      Dr=Drs, 
-		      Di=Dis, 
-		      ADi=ADis,
-		      ID=IDs)) 
+              Dr=Drs, 
+	      Di=Dis, 
+	      ADi=ADis,
+	      ID=IDs)) 
 }
 
     
