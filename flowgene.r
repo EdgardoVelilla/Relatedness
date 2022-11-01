@@ -7,7 +7,6 @@
 #' email{edgardo.velilla@cmpc.cl}                                                                                                                                                              '#
 #' Created:  21-Jan-2021                                                                                                                                                                       '#
 #' Modified: 08-Jun-2021                                                                                                                                                                       '#
-#' License: GPLv3                                                                                                                                                                              '#
 #' References:                                                                                                                                                                                 '#
 #'                                                                                                                                                                                             '#
 #' Gansner, E.R., Koutsofios, E. and North, S. (2015) Dot User’s Manual. https://www.graphviz.org/pdf/dotguide.pdf                                                                             '#
@@ -104,12 +103,12 @@ flowgene  <- function(
 					  "khaki1",
 					  "aquamarine",
 					  "bisque1"),
-                      url = "", 
-					  height, 
-					  width, 
-					  rotate, 
-					  size, 
-					  ratio) {
+                           url = "", 
+			   height, 
+			   width, 
+			   rotate, 
+			   size, 
+			   ratio) {
   if(filename == "")
       warning(substitute(filename), "ped.dot is the default name of dotfile, because you don´t provide a filename")
   if(missing(width))
