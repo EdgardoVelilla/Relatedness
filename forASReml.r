@@ -70,8 +70,8 @@
 forASReml <- function(Ginv, 
                       ginv=TRUE, 
                       rowNames=NULL, 
-					  colnames=c("row", "column", "Gsinv"),
-					  identity=FALSE) {    
+		      colnames=c("row", "column", "Gsinv"),
+		      identity=FALSE) {    
 
 library("Matrix")
 library(data.table)
@@ -82,17 +82,17 @@ source("Miscellaneous.r")
 	    Ginv <- as(Ginv, "dgTMatrix") 
 	} else if(inherits(Ginv, "dsCMatrix")) {
 	    Ginv <- as(Ginv, "dgTMatrix") 
-    } else if(inherits(Ginv, "dgRMatrix")) {
-        Ginv <- as(Ginv, "dgTMatrix") 
-    } else if(inherits(Ginv, "matrix")) {
-		Ginv <- as(as(Ginv, "sparseMatrix"), "dgTMatrix")   
-    } else if(inherits(Ginv, "TsparseMatrix")) { 
-        Ginv <- Ginv 
-    } else {
-        stop(substitute(Ginv), " must be a Sparse Matrix in Triplet Form")
+        } else if(inherits(Ginv, "dgRMatrix")) {
+            Ginv <- as(Ginv, "dgTMatrix") 
+        } else if(inherits(Ginv, "matrix")) {
+	    Ginv <- as(as(Ginv, "sparseMatrix"), "dgTMatrix")   
+        } else if(inherits(Ginv, "TsparseMatrix")) { 
+            Ginv <- Ginv 
+        } else {
+            stop(substitute(Ginv), " must be a Sparse Matrix in Triplet Form")
 	}	
     ginv <- data.table(
-	    row=Ginv@i + 1, # at sparse matrices, zero is based...!
+	        row=Ginv@i + 1, # at sparse matrices, zero is based...!
 		col=Ginv@j + 1, 
 		Ginv=Ginv@x) 
     ginv <- ginv[which(ginv[, row] >= ginv[, col]), ] # create a lower triangular matrix
@@ -102,13 +102,13 @@ source("Miscellaneous.r")
     if(is.null(rowNames)) {
       rowNames <- as.character(Ginv@Dimnames[[1]])  
       attr(ginv, "rowNames") <- rowNames
-	} 
-	else {
-	  attr(ginv, "rowNames") <- as.character(rowNames)
-	  names(ginv) <- colnames
-	  if(length(dimnames(Ginv))== 0) {
+    } 
+    else {
+      attr(ginv, "rowNames") <- as.character(rowNames)
+      names(ginv) <- colnames
+      if(length(dimnames(Ginv))== 0) {
             warning(substitute(Ginv), "  has no dimnames attribute, ASReml´s call 
-	        require rowNames attribute")
+	      require rowNames attribute")
             dimnames(Ginv) <- list(seq(1, nrow(Ginv)), 
 	                               seq(1, ncol(Ginv)))	
       }	
@@ -121,39 +121,39 @@ source("Miscellaneous.r")
 	    ginv <- as(ginv, "dgTMatrix")
 	    ginv <- data.table(
 	      row=ginv@i + 1,
-		  col=ginv@j + 1, 
-		  Ginv=ginv@x) 
-		ginv <- ginv[which(ginv[, row] >= ginv[, col]), ]   
+	      col=ginv@j + 1, 
+	      Ginv=ginv@x) 
+	      ginv <- ginv[which(ginv[, row] >= ginv[, col]), ]   
 	    ginv <- as.matrix(ginv[order(ginv[, row], ginv[, col]), ])
 	    attr(ginv, "INVERSE") <- TRUE 
-        class(ginv) <- c(class(ginv), "ginv")
-          if(is.null(rowNames)) {
-            rowNames <- as.character(Ginv@Dimnames[[1]])  
-            attr(ginv, "rowNames") <- rowNames
+            class(ginv) <- c(class(ginv), "ginv")
+              if(is.null(rowNames)) {
+                rowNames <- as.character(Ginv@Dimnames[[1]])  
+                attr(ginv, "rowNames") <- rowNames
 	      } 
 	      else {
-		     attr(ginv, "rowNames") <- as.character(rowNames)
-	         names(ginv) <- colnames
-          }
-		  if(length(dimnames(Ginv))== 0) {
-            warning(substitute(Ginv), "  has no dimnames attribute, ASReml´s call 
+		attr(ginv, "rowNames") <- as.character(rowNames)
+	        names(ginv) <- colnames
+              }
+	      if(length(dimnames(Ginv))== 0) {
+                 warning(substitute(Ginv), "  has no dimnames attribute, ASReml´s call 
 	        require rowNames attribute")
-            dimnames(Ginv) <- list(seq(1, nrow(Ginv)), 
+                dimnames(Ginv) <- list(seq(1, nrow(Ginv)), 
 	                               seq(1, ncol(Ginv)))	
-          }	
+              }	
 	    return(ginv)
-    } else if(inherits(Ginv, "dgTMatrix")) {
+        } else if(inherits(Ginv, "dgTMatrix")) {
 	    Ginv <- as(Ginv, "dgCMatrix") 
 	} else if(inherits(Ginv, "dsCMatrix")) {
 	    Ginv <- as(Ginv, "dgCMatrix") 
 	} else if(inherits(Ginv, "dgRMatrix")) {
-        Ginv <- as(Ginv, "dgCMatrix") 
-    } else if(inherits(Ginv, "matrix")) {
-		Ginv <- as(as(Ginv, "sparseMatrix"), "dgCMatrix")   
-    } else if(inherits(Ginv, "dgCMatrix")) { 
-        Ginv <- Ginv 
-    } else {
-      stop(substitute(Ginv), "  must be a compressed column 
+            Ginv <- as(Ginv, "dgCMatrix") 
+        } else if(inherits(Ginv, "matrix")) {
+	    Ginv <- as(as(Ginv, "sparseMatrix"), "dgCMatrix")   
+        } else if(inherits(Ginv, "dgCMatrix")) { 
+            Ginv <- Ginv 
+        } else {
+           stop(substitute(Ginv), "  must be a compressed column 
 	      format from class dgCMatrix Sparse Matrix")
 	}		  
 	if(!identity) Ginv <- check.PD(Ginv)
@@ -161,24 +161,24 @@ source("Miscellaneous.r")
 	ginv <- as(ginv, "dgTMatrix")
 	ginv <- data.table(
 	    row=ginv@i + 1,
-		col=ginv@j + 1, 
-		Ginv=ginv@x) 
-    ginv <- ginv[which(ginv[, row] >= ginv[, col]), ] 
+	    col=ginv@j + 1, 
+	    Ginv=ginv@x) 
+        ginv <- ginv[which(ginv[, row] >= ginv[, col]), ] 
 	ginv <- as.matrix(ginv[order(ginv[, row], ginv[, col]), ])
 	attr(ginv, "INVERSE") <- TRUE 
-    class(ginv) <- c(class(ginv), "ginv")
-    if(is.null(rowNames)) {
-       rowNames <- as.character(Ginv@Dimnames[[1]])  
-       attr(ginv, "rowNames") <- rowNames
+        class(ginv) <- c(class(ginv), "ginv")
+        if(is.null(rowNames)) {
+          rowNames <- as.character(Ginv@Dimnames[[1]])  
+          attr(ginv, "rowNames") <- rowNames
 	} 
 	else {
-		 attr(ginv, "rowNames") <- as.character(rowNames)
+	     attr(ginv, "rowNames") <- as.character(rowNames)
 	     names(ginv) <- colnames
 	  if(length(dimnames(Ginv))== 0) {
-       warning(substitute(Ginv), "  has no dimnames attribute, ASReml´s call 
+             warning(substitute(Ginv), "  has no dimnames attribute, ASReml´s call 
 	      require rowNames attribute")
-       dimnames(Ginv) <- list(seq(1, nrow(Ginv)), 
-	                          seq(1, ncol(Ginv)))	
+             dimnames(Ginv) <- list(seq(1, nrow(Ginv)), 
+	                            seq(1, ncol(Ginv)))	
       }
     }   
    return(ginv)
