@@ -2,8 +2,11 @@
 
 predExact <- function(pedigree,
                       data,
-					  h2=NULL,
-					  p1, a=NULL, d=NULL, factor=NULL) {
+		      h2=NULL,
+		      p1, 
+		      a=NULL, 
+		      d=NULL, 
+		      factor=NULL) {
 library(Matrix)
 library(data.table)
 library(pedigree)
@@ -162,9 +165,9 @@ BLUP2s[, mu2:= as.double(rep(mu2, times=m))]
 BLUP2s[, y_hat2:= mu2 + BLUP_add2 + dom2.adj] 
 BLUP.both <- BLUPs[BLUP2s, on=.(TreeID= TreeID)] 
 BLUP.both[, f:= f]
-setcolorder(BLUP.both, c(1:3,17, 4,11, 6,13, 5,12, 7,14, 8,15, 9,10,16))
+setcolorder(BLUP.both, c(1:3,17,4,11,6,13,5,12,7,14,8,15,9,10,16))
 idep <- data.table(id,id2) 
   return(list(BLUP= BLUP.both, 
-                id= idep,
-			 quadr= quadr))  
+              id= idep,
+	      quadr= quadr))  
 }
