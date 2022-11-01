@@ -6,7 +6,6 @@
 #' Author: Edgardo Velilla P.                                                                                                                                                                  '#
 #' email{edgardo.velilla@cmpc.cl}                                                                                                                                                              '#
 #' Created: 31-Ago-2022                                                                                                                                                                        '#
-#' License: GPLv3                                                                                                                                                                              '#
 #'                                                                                                                                                                                             '#
 #' General description                                                                                                                                                                         '#
 #'                                                                                                                                                                                             '#
