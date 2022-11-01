@@ -105,6 +105,7 @@ library("Matrix")
 
 source("forASReml.r")
 source("Miscellaneous.r")
+source("pedFam.r")	
 
  if (is.data.frame(pedigree)) {
       pedigree <- as.data.table(pedigree)
@@ -235,15 +236,15 @@ source("Miscellaneous.r")
        F.inv <- solve.CHMperm(F,
          CheckPD= TRUE)
        Finv.as <- forASReml(
-            F.inv, ginv=TRUE,
-	          colnames=c("row",
-	          "column", "Finv"))
+                    F.inv, ginv=TRUE,
+	            colnames=c("row",
+	            "column", "Finv"))
        Dw.inv <- solve.CHMperm(M,
-            CheckPD= TRUE)
+                    CheckPD= TRUE)
        Dwinv.as <- forASReml(
-	     Dw.inv, ginv=TRUE,
-             colnames=c("row",
-	           "column", "Dwinv"))
+	             Dw.inv, ginv=TRUE,
+                     colnames=c("row",
+	             "column", "Dwinv"))
           cat('job done...! \n')
       return(list(A=As,
                   F=Fs,
@@ -258,7 +259,7 @@ source("Miscellaneous.r")
        eturn(list(A=As,
                   F=Fs,
                   Dw=M,
-	              f=f))
+	          f=f))
        }
   } else {
       Ds <- as(D, "sparseMatrix") 
@@ -267,40 +268,40 @@ source("Miscellaneous.r")
          cat('be patient ...\n')
          Dw.inv <- solve.CHMperm(Dws)
          Dwinv.as <- forASReml(
-               Dw.inv, ginv=TRUE,
-               colnames=c("row",
-               "column", "Dwinv"))
-	       D.inv <- solve.CHMperm(Ds) 
+                       Dw.inv, ginv=TRUE,
+                       colnames=c("row",
+                       "column", "Dwinv"))
+	 D.inv <- solve.CHMperm(Ds) 
          Dinv.as <- forASReml(
-	       D.inv, ginv=TRUE,
-               colnames=c("row",
-               "column", "Dinv"))
+	              D.inv, ginv=TRUE,
+                      colnames=c("row",
+                      "column", "Dinv"))
 	   
          F.inv <- solve.CHMperm(
                      Fs, CheckPD= TRUE)
          Finv.as <- forASReml(
-              F.inv, ginv=TRUE,
-              colnames=c("row",
-	            "column", "Finv"))
+                      F.inv, ginv=TRUE,
+                      colnames=c("row",
+	              "column", "Finv"))
                 cat('job done...! \n')
               return(list(A=As,
-                     F=Fs,
-                     Finv=F.inv,
-	                   Finv.as=Finv.as,
-                     Dw=Dws,
-	                   Dwinv=Dw.inv,
-                     Dwinv.as=Dwinv.as,
-	                   D=Ds,
-                     Dinv=D.inv,
-	                   Dinv.as=Dinv.as,
-	                   f=f))
+                          F=Fs,
+                          Finv=F.inv,
+	                  Finv.as=Finv.as,
+                          Dw=Dws,
+	                  Dwinv=Dw.inv,
+                          Dwinv.as=Dwinv.as,
+	                  D=Ds,
+                          Dinv=D.inv,
+	                  Dinv.as=Dinv.as,
+	                  f=f))
       } else {
           cat('job done...! \n')
           return(list(A=As, 
                       F=Fs,
                       Dw=Dws,
-		                  D=Ds,
-		                  f=f))
+		      D=Ds,
+		      f=f))
         }
     }	 
 }
