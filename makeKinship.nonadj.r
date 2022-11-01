@@ -7,7 +7,6 @@
 #' email{edgardo.velilla@cmpc.cl}                                                                                                                                                              '#
 #' Created: 12-Mar-2021                                                                                                                                                                        '#
 #' Modified: 05-May-2022                                                                                                                                                                       '#
-#' License: GPLv3                                                                                                                                                                              '#
 #' References:                                                                                                                                                                                 '#
 #'                                                                                                                                                                                             '#
 #' Cockerham, C.C.(1954). An extension of the concept of partitioning hereditary variance for analysis of covariances among relatives when                                                     '#
