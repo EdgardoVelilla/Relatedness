@@ -1,8 +1,8 @@
 herit <- function(pedigree, 
                   p1, 
-				  a=NULL, 
-				  d=NULL, 
-				  sigma2.e) {
+		  a=NULL, 
+		  d=NULL, 
+		  sigma2.e) {
 				  
 library(data.table)
 library(pedigree)
@@ -27,6 +27,6 @@ h2 <- ((1 + mu.f)*sigma2.ar + 2*mu.f*cov.adi)/(((1 + mu.f)*sigma2.ar + 2*mu.f*co
 H2 <- ((1 + mu.f)*sigma2.ar + 2*mu.f*cov.adi +(1 - mu.f)*sigma2.dr +mu.f*sigma2.di+var.f*id^2)/((1 + mu.f)*sigma2.ar
         + 2*mu.f*cov.adi +(1 - mu.f)*sigma2.dr +mu.f*sigma2.di+var.f*id^2 + sigma2.e)
  return(list(h2= h2, 
-		     H2= H2)) 
+	     H2= H2)) 
 
 }
