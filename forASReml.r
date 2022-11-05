@@ -174,11 +174,11 @@ source("Miscellaneous.r")
 	else {
 	     attr(ginv, "rowNames") <- as.character(rowNames)
 	     names(ginv) <- colnames
-	  if(length(dimnames(Ginv))== 0) {
-             warning(substitute(Ginv), "  has no dimnames attribute, ASReml´s call 
-	      require rowNames attribute")
-             dimnames(Ginv) <- list(seq(1, nrow(Ginv)), 
-	                            seq(1, ncol(Ginv)))	
+	if(length(dimnames(Ginv))== 0) {
+           warning(substitute(Ginv), "  has no dimnames attribute, ASReml´s call 
+	          require rowNames attribute")
+           dimnames(Ginv) <- list(seq(1, nrow(Ginv)), 
+	                          seq(1, ncol(Ginv)))	
       }
     }   
    return(ginv)
