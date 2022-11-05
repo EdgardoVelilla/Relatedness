@@ -209,8 +209,8 @@ library(Matrix)
 	   C <- drop0(C, tol = 1e-15, 
 			 is.Csparse = NA)
 	   if(CheckPD) C <- check.PD(C)	 		 
-         m <- dim(C)[1L]
-	     b <- Diagonal(m)  
+              m <- dim(C)[1L]
+	      b <- Diagonal(m)  
          CHMp <- Cholesky(C, perm = TRUE)
 		 L <- as(CHMp, "Matrix") # L is the Cholesky factor such that C=t(P)%*%L%*%t(L)%*%P <- P'LL'P
 		 P <- as(CHMp, "pMatrix") # P is a permuation matrix
@@ -284,7 +284,7 @@ makeFam <- function(pedigree){
 	  pmax(mum, dad), 
 	  sep = "x"))]
      ped.cross[, cross:= factor(cross, 
-       levels = unique(cross))] 
+        levels = unique(cross))] 
 	ped.cross[]
 }
 
@@ -295,8 +295,8 @@ library(Matrix)
     m <- Matrix::Matrix(
 	  nrow= n.rows, 
 	  ncol= n.cols, 
-      data= 1L, 
-      sparse= TRUE)
+          data= 1L, 
+          sparse= TRUE)
   return(m)	  
  } 
 
@@ -318,13 +318,13 @@ Mend.m <- function(pedigree) {
 library(Matrix)
 
 if (is.data.frame(pedigree)) {
-      pedigree <- as.data.table(pedigree)
+    pedigree <- as.data.table(pedigree)
  } else if (is.matrix(pedigree)) { 
-	  pedigree <- as.data.table(pedigree)
+	   pedigree <- as.data.table(pedigree)
  } else if (is.data.table(pedigree)) {
-	  pedigree <- as.data.table(pedigree)
+	   pedigree <- as.data.table(pedigree)
  } else {
-	  stop("nothing to do...")  
+	   stop("nothing to do...")  
  }	
   pedi <- pedigree[, c(1L: 3L)]	 
   setnames(pedi,  	
@@ -340,18 +340,19 @@ if (is.data.frame(pedigree)) {
 
 # function to create the relatedness matrix corresponding to non-additive Mendelian Sampling term "adjuted" by inbreeding ("f") in 
 # the class "dsCMatrix", i.e., symmetric real sparse matrix in the compressed sparse column format.
+
 Mend.adj <- function(pedigree, f= NULL) {
 library(Matrix)
 library(pedigree)
 
 if (is.data.frame(pedigree)) {
-      pedigree <- as.data.table(pedigree)
+    pedigree <- as.data.table(pedigree)
  } else if (is.matrix(pedigree)) { 
-	  pedigree <- as.data.table(pedigree)
+	   pedigree <- as.data.table(pedigree)
  } else if (is.data.table(pedigree)) {
-	  pedigree <- as.data.table(pedigree)
+	   pedigree <- as.data.table(pedigree)
  } else {
-	  stop("nothing to do...")  
+	   stop("nothing to do...")  
  }	   
   if(is.null(f)) {
    f <- as.vector(calcInbreeding(
@@ -364,7 +365,7 @@ if (is.data.frame(pedigree)) {
   s <- dim(pedigree)[1L] - m0
   M <- .symDiagonal(m0 + s) # relatedness matrix (Im) for non-additive Mendelian Sampling term
   M[cbind(seq(m0 + 1L, m0 + s), 
-	    seq(m0 + 1L, m0+s))] <- 0.75*(1-f[seq(m0 + 1L, m0 + s)]) 
+	  seq(m0 + 1L, m0+s))] <- 0.75*(1-f[seq(m0 + 1L, m0 + s)]) 
   M@Dimnames[[1L]] <- M@Dimnames[[2L]] <- as.character(pedi[[1L]])
  M[] 
 }  
@@ -374,13 +375,13 @@ check.PD <- function(C){
 library(Matrix)
  
     eigen <- eigen(C, symmetric = TRUE)$values
-	PD <- ifelse(any(eigen < 0L), 'TRUE', 'FALSE') 		
+    PD <- ifelse(any(eigen < 0L), 'TRUE', 'FALSE') 		
     if(PD) {
       F.pd <- as(nearPD(C, corr=FALSE, 
 	          keepDiag = FALSE, 
 	          conv.tol = 1e-5, 
-			  maxit = 300)$mat, 
-			 'sparseMatrix')  
+		  maxit = 300)$mat, 
+		  'sparseMatrix')  
           } else {
               F.pd <- C 
           }
@@ -388,38 +389,40 @@ library(Matrix)
 } 
 
 # function to build the family design matrix (Z.fam) "dsparseModelMatrix"
+
 Z.fam <-function(trial){
 library(Matrix)
 library(MatrixModels)
 library(data.table)
  
     if (is.data.frame(trial)) {
-      pedigree <- as.data.table(trial)
+       pedigree <- as.data.table(trial)
     } else if (is.matrix(trial)) { 
-	  pedigree <- as.data.table(trial)
+	     pedigree <- as.data.table(trial)
     } else if (is.data.table(trial)) {
-	  trial <- trial
+	    trial <- trial
     } else {
 	  stop("nothing to do...")  
     }	
     trial[, cross:= factor(cross, 
-      levels = unique(cross))] 
+         levels = unique(cross))] 
     form <- formula(~ cross -1) 
     termsf <- terms(form, 
-      keep.order = TRUE) 
+                keep.order = TRUE) 
     mf <- model.frame(
-	  termsf, data=trial, 
-	  na.action= na.pass)
+	   termsf, data=trial, 
+	   na.action= na.pass)
     Zfam <- MatrixModels::model.Matrix(
-	  form, mf, sparse=TRUE)
+	      form, mf, sparse=TRUE)
     rownames(Zfam) <- c(paste0("TreeID", 
-	  trial[[1L]]))
+	                trial[[1L]]))
   return(Zfam)	  
 }
 
 
 # function to build the design matrix (Z)
 # assumption: all individuals have records
+
 Z.mat <- function(pedigree){
 library(Matrix)
 library(MatrixModels)
@@ -521,7 +524,7 @@ Zg <- MatrixModels::model.Matrix(
 Zg[is.na(Zg)] <- 0 
 rownames(Zg) <- c(paste0("gen", trial[[5]]))
 r <- dim(Zg)[2]
-Zg <- Zg[, seq(2, r), drop=FALSE]  # remove first level to get n-1 level of the factor gen. Othercase, C matrix is singular...!
+Zg <- Zg[, seq(2, r), drop=FALSE]  # remove first level to get n-1 level of the factor gen. Otherwise, C matrix is singular...!
 }
 
 
