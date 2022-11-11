@@ -97,12 +97,12 @@ flowgene  <- function(
 			   form=FALSE, 
 			   numeric=FALSE, 
 			   cols=c("chocolate4",
-					  "olivedrab",
-					  "orange2",
-					  "gold",
-					  "khaki1",
-					  "aquamarine",
-					  "bisque1"),
+				 "olivedrab",
+				 "orange2",
+				 "gold",
+				 "khaki1",
+				 "aquamarine",
+				 "bisque1"),
                            url = "", 
 			   height, 
 			   width, 
@@ -162,8 +162,8 @@ flowgene  <- function(
       color[generOld == 2] <- cols[3]
       color[generOld == 3] <- cols[4]
       color[generOld == 4] <- cols[5]  
-	  color[generOld == 5] <- cols[6]
-	  color[generOld == 6] <- cols[7]  
+      color[generOld == 5] <- cols[6]
+      color[generOld == 6] <- cols[7]  
     if (form) {
        shape <- rep("ellipse", nrow(pedigree))  # form: rectangle for founders, circle for one unknown parent, elipse for progeny
        founders <- as.numeric(is.na(mum)) + as.numeric(is.na(dad))
