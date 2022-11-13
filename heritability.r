@@ -22,10 +22,14 @@ f <- as.vector(pedigree::calcInbreeding(
 mu.f <- mean(f) 
 var.f <- mu.f*(1 - mu.f)
 
-h2 <- ((1 + mu.f)*sigma2.ar + 2*mu.f*cov.adi)/(((1 + mu.f)*sigma2.ar + 2*mu.f*cov.adi + sigma2.e))
+h2 <- ((1 + mu.f)*sigma2.ar + 2*mu.f*cov.adi)/
+     (((1 + mu.f)*sigma2.ar + 2*mu.f*cov.adi + sigma2.e))
 
-H2 <- ((1 + mu.f)*sigma2.ar + 2*mu.f*cov.adi +(1 - mu.f)*sigma2.dr +mu.f*sigma2.di+var.f*id^2)/((1 + mu.f)*sigma2.ar
-        + 2*mu.f*cov.adi +(1 - mu.f)*sigma2.dr +mu.f*sigma2.di+var.f*id^2 + sigma2.e)
+H2 <- ((1 + mu.f)*sigma2.ar + 2*mu.f*cov.adi 
+      + (1 - mu.f)*sigma2.dr +mu.f*sigma2.di+var.f*id^2)/
+      ((1 + mu.f)*sigma2.ar + 2*mu.f*cov.adi 
+      + (1 - mu.f)*sigma2.dr +mu.f*sigma2.di+var.f*id^2 
+      + sigma2.e)
  return(list(h2= h2, 
 	     H2= H2)) 
 
