@@ -87,15 +87,15 @@ library(pedigree)
 f <- as.vector(pedigree::calcInbreeding(ped_Figure4))
 # calculation inbreeding coefficient's mean	 
 mu.f <- mean(f) 
-# calculation inbreeding coefficient's "population" variance	
+# calculation inbreeding coefficient's variance	
 var.f <- mu.f*(1- mu.f)	
 
 source("heritability.r")	
 herit <- herit(ped_Figure4, 
-            p1=0.3, 
-			a=1, 
-			d=1, 
-			sigma2.e=1.5)
+              p1=0.3, 
+	      a=1, 
+	      d=1, 
+	      sigma2.e=1.5)
 			
 h2 <- herit[['h2']]
 H2 <- herit[['H2']]  
