@@ -45,22 +45,30 @@ cols <- c('TreeID','mum', 'dad')
 pedigree[, (cols):= lapply(.SD, 
   as.integer), .SDcols= cols]	
     
-fwrite(pedigree, file = "pedi.csv", quote = FALSE, 
-  sep = " ", row.names = FALSE, col.names = FALSE)
-fwrite(pedigree[, .(TreeID)], file = "sample.csv", 
-  quote = FALSE, row.names = FALSE, col.names = FALSE)  
+fwrite(pedigree, 
+       file = "pedi.csv", 
+       quote = FALSE, 
+       sep = " ", 
+       row.names = FALSE, 
+       col.names = FALSE)
+fwrite(pedigree[, .(TreeID)], 
+       file = "sample.csv", 
+       quote = FALSE, 
+       row.names = FALSE, 
+       col.names = FALSE)  
 command <- paste0('idcoefs -p pedi.csv -s sample.csv -o output.csv -r ', 
                   paste(RAM))
 res <- suppressWarnings(system(
-  command, wait = TRUE, intern = TRUE))
-if(verbose) 
-  message(res)
+                        command, 
+	                wait = TRUE, 
+	                intern = TRUE))
+if(verbose) message(res)
 
 output <- fread("output.csv")	
 setnames(output, 
-      old = colnames(output), 
-      new = c('x','y', 
-      c(paste0("J", seq(1L:9L))))) 
+         old = colnames(output), 
+         new = c('x','y', 
+         c(paste0("J", seq(1L:9L))))) 
   output[]
 }
 
