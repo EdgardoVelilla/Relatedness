@@ -1,7 +1,7 @@
 ###############################################################################################################################################
 #'                                                                                                                                           '#
-#' miscelaneous function                                                                                                                     '#                                                   '#               
-#'                                                                                                                                           '#                                                  '#
+#' miscelaneous function                                                                                                                     '#
+#'                                                                                                                                           '#
 #' Author: Edgardo Velilla P.                                                                                                                '#
 #' email{edgardo.velilla@cmpc.cl}                                                                                                            '#
 #' Created: 05-Mar-2022                                                                                                                      '#
@@ -112,54 +112,54 @@
 # function suggested for solving "sparse" linear equations system of the form CX = b, where C held in the class "dgCMatrix", i.e., general numeric 
 # sparse matrix in the compressed sparse column format.
  	 
-solve.MME2 <- function(C, b, CheckPD = FALSE){  
+solve.MME2 <- function(C, b, CheckPD = FALSE){
 library(Matrix)
 library(data.table)
         
-  C <- forceSymmetric(new("dgCMatrix", 
-		 i=C@i, 
-		 p=C@p, 
-		 Dim=C@Dim, 
-		 x=C@x, 
+  C <- forceSymmetric(new("dgCMatrix",
+		 i=C@i,
+		 p=C@p,
+		 Dim=C@Dim,
+		 x=C@x,
 		 Dimnames=list(C@Dimnames[[1L]],
-		 C@Dimnames[[2L]]))) 
-  C <- drop0(C, tol = 1e-15, 
-			 is.Csparse = NA)
-  if(CheckPD) C <- check.PD(C)		 
+		 C@Dimnames[[2L]])))
+  C <- drop0(C, tol = 1e-15,
+	    is.Csparse = NA)
+  if(CheckPD) C <- check.PD(C)
   R <- Matrix::chol(C, pivot= TRUE)
   Rp <- t(R)
   P <- as(order(attr(R, 'pivot')), 'pMatrix')
   Pp <- t(P)
-  c <- Pp%*%b 
-  y <- solve(Rp, c) # class 'dgeMatrix' 
+  c <- Pp%*%b
+  y <- solve(Rp, c) # class 'dgeMatrix'
   z0 <- solve(R, y) # class 'dgCMatrix'
-  z1 <- as.data.table(as.matrix(P%*%z0)) 
+  z1 <- as.data.table(as.matrix(P%*%z0))
  z1[]
 }
 
 # function suggested for solving "dense" linear equations system of the form CX = b, where C held in the class "dgCMatrix", i.e., general numeric  
 # sparse matrix in the compressed sparse column format 	
 	
-solve.MME <- function(C, b, CheckPD= FALSE){ 
+solve.MME <- function(C, b, CheckPD= FALSE){
 library(Matrix)
  
-  C <- forceSymmetric(new("dgCMatrix", 
-		 i=C@i, 
-		 p=C@p, 
-		 Dim=C@Dim, 
-		 x=C@x, 
+  C <- forceSymmetric(new("dgCMatrix",
+		 i=C@i,
+		 p=C@p,
+		 Dim=C@Dim,
+		 x=C@x,
 		 Dimnames=list(C@Dimnames[[1L]],
-		 C@Dimnames[[2L]]))) 
-  C <- drop0(C, tol = 1e-15, 
-			 is.Csparse = NA)
+		 C@Dimnames[[2L]])))
+  C <- drop0(C, tol = 1e-15,
+	    is.Csparse = NA)
   if(CheckPD) C <- check.PD(C)
   R <- chol(C, pivot=TRUE)
-  P <- as(order(attr(R, 'pivot')), 
+  P <- as(order(attr(R, 'pivot')),
 	        'pMatrix')
   z <- as.vector(
-	     backsolve(R, forwardsolve(R, 
-	     t(P)%*%b, 
-	     upper.tri = TRUE, 
+	     backsolve(R, forwardsolve(R,
+	     t(P)%*%b,
+	     upper.tri = TRUE,
 	     transpose = TRUE)))
   sol <- as.vector(P%*%z)
  sol[]
@@ -169,80 +169,80 @@ library(Matrix)
 # symmetric real sparse matrix in the compressed sparse column format. That is, only the upper or the lower triangle of C is stored, and I is 
 # an identity matrix. 
 
-solve.CHMperm <- function(C, CheckPD= FALSE){ 
-library(Matrix) 
+solve.CHMperm <- function(C, CheckPD= FALSE){
+library(Matrix)
       
 	  if(is.null(C@Dimnames[[1L]]))
-	  dimnames(C) <- list(seq(1L, nrow(C)), 
-	                      seq(1L, ncol(C)))	
+	  dimnames(C) <- list(seq(1L, nrow(C)),
+	                      seq(1L, ncol(C)))
 	  m <- dim(C)[1L]
-	  b <- Diagonal(m) 
-      if(CheckPD) C <- check.PD(C)	  
+	  b <- Diagonal(m)
+      if(CheckPD) C <- check.PD(C)
       CHMp <- Cholesky(C, perm = TRUE)
 	  L <- as(CHMp, "Matrix") # L is the Cholesky factor such that C=t(P)%*%L%*%t(L)%*%P <- P'LL'P
 	  P <- as(CHMp, "pMatrix") # where P is a permutation matrix
-	  z <- solve(t(L), solve(L, t(P)%*%b, # Cinv= P’R’RP=(RP)’(RP) where (RP)' <- t(PR) with  R <- t(L)=L' 
-		   system="L"), system="Lt") 
-	  ginv <- P%*%z 
-      ginv@Dimnames[[1L]] <- C@Dimnames[[1L]] 
-      ginv@Dimnames[[2L]] <- C@Dimnames[[2L]]		
+	  z <- solve(t(L), solve(L, t(P)%*%b, # Cinv= P’R’RP=(RP)’(RP) where (RP)' <- t(PR) with  R <- t(L)=L'
+		   system="L"), system="Lt")
+	  ginv <- P%*%z
+      ginv@Dimnames[[1L]] <- C@Dimnames[[1L]]
+      ginv@Dimnames[[2L]] <- C@Dimnames[[2L]]
   ginv[]
 }
 
-# function suggested for solving "sparse" linear equations system  of the form C%*%C^(-1)= I, where C held in the class "dgCMatrix", i.e., general 
-# numeric sparse matrix in the compressed sparse column format and I is an identity matrix.	
+# function suggested for solving "sparse" linear equations system  of the form C%*%C^(-1)= I, where C held in the class "dgCMatrix", i.e., general
+# numeric sparse matrix in the compressed sparse column format and I is an identity matrix.
 
 solve.perm <- function(C, CheckPD= FALSE){
 library(Matrix)
 
       if(is.null(C@Dimnames[[1L]]))
-	  dimnames(C) <- list(seq(1L, nrow(C)), 
-	                      seq(1L, ncol(C)))	
+	  dimnames(C) <- list(seq(1L, nrow(C)),
+	                      seq(1L, ncol(C)))
 	  C <- forceSymmetric(new(
-	        "dgCMatrix", 
-		    i=C@i, 
-		    p=C@p, 
-		    Dim=C@Dim, 
-		    x=C@x, 
+	        "dgCMatrix",
+		    i=C@i,
+		    p=C@p,
+		    Dim=C@Dim,
+		    x=C@x,
 		    Dimnames=list(C@Dimnames[[1L]],
-		    C@Dimnames[[2L]]))) 
-	   C <- drop0(C, tol = 1e-15, 
+		    C@Dimnames[[2L]])))
+	   C <- drop0(C, tol = 1e-15,
 			 is.Csparse = NA)
-	   if(CheckPD) C <- check.PD(C)	 		 
+	   if(CheckPD) C <- check.PD(C)
               m <- dim(C)[1L]
-	      b <- Diagonal(m)  
+	      b <- Diagonal(m)
          CHMp <- Cholesky(C, perm = TRUE)
 		 L <- as(CHMp, "Matrix") # L is the Cholesky factor such that C=t(P)%*%L%*%t(L)%*%P <- P'LL'P
 		 P <- as(CHMp, "pMatrix") # P is a permuation matrix
-		 z <- solve(t(L), solve(L, t(P)%*%b, 
-		      system="L"), system="Lt") # Cinv= P’R’RP=(RP)’(RP) where (RP)' <- t(PR) with  R <- t(L)=L' 
-		 Cinv <- P%*%z                                        
-         Cinv@Dimnames[[1L]] <- C@Dimnames[[1L]] 
-         Cinv@Dimnames[[2L]] <- C@Dimnames[[2L]]		
+		 z <- solve(t(L), solve(L, t(P)%*%b,
+		      system="L"), system="Lt") # Cinv= P’R’RP=(RP)’(RP) where (RP)' <- t(PR) with  R <- t(L)=L'
+		 Cinv <- P%*%z
+         Cinv@Dimnames[[1L]] <- C@Dimnames[[1L]]
+         Cinv@Dimnames[[2L]] <- C@Dimnames[[2L]]
   Cinv[]
-}	
+}
 
 # function suggested for solving "symmetric dense" linear equations system  of the form C%*%C^(-1)= I, where C held in the class "dgCMatrix", i.e., real
-# matrix in general storage mode and I is an identity matrix. 
+# matrix in general storage mode and I is an identity matrix.
 
 solve.m <- function(C, CheckPD= FALSE){
 library(Matrix)
       
      if(is.null(C@Dimnames[[1L]]))
-	  dimnames(C) <- list(seq(1L, nrow(C)), 
-	                      seq(1L, ncol(C)))	
+	  dimnames(C) <- list(seq(1L, nrow(C)),
+	                      seq(1L, ncol(C)))
      m <- dim(C)[1L]
-	 b <- Diagonal(m) 
-	 if(CheckPD) C <- check.PD(C)	 
+	 b <- Diagonal(m)
+	 if(CheckPD) C <- check.PD(C)
 	 R <- chol(C, pivot=TRUE)
-	 P <- as(order(attr(R, 'pivot')), 
+	 P <- as(order(attr(R, 'pivot')),
 	        'pMatrix')
      c <- t(P)%*%b
-     z <- backsolve(R, forwardsolve(R, c, 
-	        upper.tri = TRUE, 
+     z <- backsolve(R, forwardsolve(R, c,
+	        upper.tri = TRUE,
 	        transpose = TRUE))
 	 sol <- P%*%z
-	 colnames(sol) <- rownames(sol) <- C@Dimnames[[1L]] 
+	 colnames(sol) <- rownames(sol) <- C@Dimnames[[1L]]
    sol[]
 }
 
@@ -251,15 +251,15 @@ library(Matrix)
 
 ###############################################################################################################################################
 #'                                                                                                                                           '#
-#'                                                             General functions                                                             '# 
+#'                                                             General functions                                                             '#
 #'                                                                                                                                           '#
-###############################################################################################################################################    
+###############################################################################################################################################
 
 # function to add a "generation" field to the pedigree
 gen.add <- function(pedigree) {
-library(data.table) 
-  pedigree <- pedigree[, c(1L:3L)]	
-  setnames(pedigree, old = colnames(pedigree), 
+library(data.table)
+  pedigree <- pedigree[, c(1L:3L)]
+  setnames(pedigree, old = colnames(pedigree),
     new = c('TreeID','mum', 'dad'))
   ped <- copy(pedigree) # get a copy of pedigree to avoid side effect of :=
   ped[, gen := 0L]
@@ -272,73 +272,70 @@ library(data.table)
 }
 
 # function to add a "cross" field to the pedigree
-makeFam <- function(pedigree){	
+makeFam <- function(pedigree){
      ped.cross <- copy(pedigree[, c(1L:3L)])
-	 
-	 setnames(ped.cross,  	
-       c('TreeID','mum', 'dad'))
-     ped.cross[, 
-	  cross:= ifelse((mum==0L | dad==0L), 
-	  NA, 
-      paste(pmin(mum, dad), 
-	  pmax(mum, dad), 
+	 setnames(ped.cross,
+                 c('TreeID','mum', 'dad'))
+     ped.cross[,
+	  cross:= ifelse((mum==0L | dad==0L),
+	  NA,
+          paste(pmin(mum, dad),
+	  pmax(mum, dad),
 	  sep = "x"))]
-     ped.cross[, cross:= factor(cross, 
-        levels = unique(cross))] 
+     ped.cross[, cross:= factor(cross,
+        levels = unique(cross))]
 	ped.cross[]
 }
 
 # function to make a matrix of ones in the compressed sparse column format ("dgCMatrix")
 ones.matrix <- function(n.rows, n.cols) {
 library(Matrix)
- 
     m <- Matrix::Matrix(
-	  nrow= n.rows, 
-	  ncol= n.cols, 
-          data= 1L, 
+	  nrow= n.rows,
+	  ncol= n.cols,
+          data= 1L,
           sparse= TRUE)
-  return(m)	  
- } 
+  return(m)
+ }
 
 # function to make a matrix of zeros in the compressed sparse column format ("dgCMatrix")
-zeros.matrix <- function(n.rows, n.cols) { 
+zeros.matrix <- function(n.rows, n.cols) {
 library(Matrix)
-
     m <- Matrix::Matrix(
-	  nrow= n.rows, 
-	  ncol= n.cols, 
-      data= 0L, 
-      sparse= TRUE)
-  return(m)	  
+	  nrow= n.rows,
+	  ncol= n.cols,
+          data= 0L,
+          sparse= TRUE)
+  return(m)
  }  
 
-# function to create the relatedness matrix corresponding to non-additive Mendelian Sampling term "non-adjuted" by inbreeding in 
+# function to create the relatedness matrix corresponding to non-additive Mendelian Sampling term "non-adjuted" by inbreeding in
 # the class "dsCMatrix", i.e., symmetric real sparse matrix in the compressed sparse column format.
 Mend.m <- function(pedigree) {
 library(Matrix)
 
 if (is.data.frame(pedigree)) {
     pedigree <- as.data.table(pedigree)
- } else if (is.matrix(pedigree)) { 
+ } else if (is.matrix(pedigree)) {
 	   pedigree <- as.data.table(pedigree)
  } else if (is.data.table(pedigree)) {
 	   pedigree <- as.data.table(pedigree)
  } else {
-	   stop("nothing to do...")  
- }	
-  pedi <- pedigree[, c(1L: 3L)]	 
-  setnames(pedi,  	
+	   stop("nothing to do...")
+ }
+  pedi <- pedigree[, c(1L: 3L)]
+  setnames(pedi,
     c('TreeID','mum', 'dad'))
   m0 <- length(pedi[mum==0L | dad==0L, TreeID])
   s <- dim(pedi)[1L] - m0
-  Im <- .symDiagonal(m0 + s) 
-  Im[cbind(seq(m0 + 1L, m0 + s), 
+  Im <- .symDiagonal(m0 + s)
+  Im[cbind(seq(m0 + 1L, m0 + s),
 	    seq(m0 + 1L, m0 + s))] <- 0.75
   Im@Dimnames[[1L]] <- Im@Dimnames[[2L]] <- as.character(pedi[[1]])
- Im[] 
-}  
+ Im[]
+}
 
-# function to create the relatedness matrix corresponding to non-additive Mendelian Sampling term "adjuted" by inbreeding ("f") in 
+# function to create the relatedness matrix corresponding to non-additive Mendelian Sampling term "adjuted" by inbreeding ("f") in
 # the class "dsCMatrix", i.e., symmetric real sparse matrix in the compressed sparse column format.
 
 Mend.adj <- function(pedigree, f= NULL) {
@@ -347,46 +344,45 @@ library(pedigree)
 
 if (is.data.frame(pedigree)) {
     pedigree <- as.data.table(pedigree)
- } else if (is.matrix(pedigree)) { 
+ } else if (is.matrix(pedigree)) {
 	   pedigree <- as.data.table(pedigree)
  } else if (is.data.table(pedigree)) {
 	   pedigree <- as.data.table(pedigree)
  } else {
-	   stop("nothing to do...")  
- }	   
+	   stop("nothing to do...")
+ }
   if(is.null(f)) {
    f <- as.vector(calcInbreeding(
 	     pedigree[, c(1L:3L)]))
-  } 
-  pedi <- pedigree[, c(1L: 3L)]	 
-  setnames(pedi,  	
+  }
+  pedi <- pedigree[, c(1L: 3L)]
+  setnames(pedi,
     c('TreeID','mum', 'dad'))
   m0 <- length(pedi[mum==0L | dad==0L, TreeID])
   s <- dim(pedigree)[1L] - m0
   M <- .symDiagonal(m0 + s) # relatedness matrix (Im) for non-additive Mendelian Sampling term
-  M[cbind(seq(m0 + 1L, m0 + s), 
-	  seq(m0 + 1L, m0+s))] <- 0.75*(1-f[seq(m0 + 1L, m0 + s)]) 
+  M[cbind(seq(m0 + 1L, m0 + s),
+	  seq(m0 + 1L, m0+s))] <- 0.75*(1-f[seq(m0 + 1L, m0 + s)])
   M@Dimnames[[1L]] <- M@Dimnames[[2L]] <- as.character(pedi[[1L]])
- M[] 
-}  
+ M[]
+}
 
 # A simple (but useful) function to check if sigma is positive-definite, if not, fixed it...!
 check.PD <- function(C){
 library(Matrix)
- 
     eigen <- eigen(C, symmetric = TRUE)$values
-    PD <- ifelse(any(eigen < 0L), 'TRUE', 'FALSE') 		
+    PD <- ifelse(any(eigen < 0L), 'TRUE', 'FALSE')
     if(PD) {
-      F.pd <- as(nearPD(C, corr=FALSE, 
-	          keepDiag = FALSE, 
-	          conv.tol = 1e-5, 
-		  maxit = 300)$mat, 
-		  'sparseMatrix')  
-          } else {
-              F.pd <- C 
-          }
-   F.pd[]	  
-} 
+      F.pd <- as(nearPD(C, corr=FALSE,
+	          keepDiag = FALSE,
+	          conv.tol = 1e-5,
+		  maxit = 300)$mat,
+		  'sparseMatrix')
+           } else {
+               F.pd <- C
+           }
+  F.pd[]
+}
 
 # function to build the family design matrix (Z.fam) "dsparseModelMatrix"
 
@@ -397,26 +393,26 @@ library(data.table)
  
     if (is.data.frame(trial)) {
        pedigree <- as.data.table(trial)
-    } else if (is.matrix(trial)) { 
+    } else if (is.matrix(trial)) {
 	     pedigree <- as.data.table(trial)
     } else if (is.data.table(trial)) {
 	    trial <- trial
     } else {
-	  stop("nothing to do...")  
-    }	
-    trial[, cross:= factor(cross, 
-         levels = unique(cross))] 
-    form <- formula(~ cross -1) 
-    termsf <- terms(form, 
-                keep.order = TRUE) 
+	  stop("nothing to do...")
+    }
+    trial[, cross:= factor(cross,
+         levels = unique(cross))]
+    form <- formula(~ cross -1)
+    termsf <- terms(form,
+                keep.order = TRUE)
     mf <- model.frame(
-	   termsf, data=trial, 
+	   termsf, data=trial,
 	   na.action= na.pass)
     Zfam <- MatrixModels::model.Matrix(
 	      form, mf, sparse=TRUE)
-    rownames(Zfam) <- c(paste0("TreeID", 
+    rownames(Zfam) <- c(paste0("TreeID",
 	                trial[[1L]]))
-  return(Zfam)	  
+  return(Zfam)
 }
 
 
@@ -426,109 +422,108 @@ library(data.table)
 Z.mat <- function(pedigree){
 library(Matrix)
 library(MatrixModels)
-library(data.table)  
+library(data.table)
  if (is.data.frame(pedigree)) {
       pedigree <- as.data.table(pedigree)
- } else if (is.matrix(pedigree)) { 
+ } else if (is.matrix(pedigree)) {
 	  pedigree <- as.data.table(pedigree)
  } else if (is.data.table(pedigree)) {
 	  pedigree <- pedigree
  } else {
-	  stop("nothing to do...")  
- }	
+	  stop("nothing to do...")
+ }
 if(!any(names(pedigree)== 'gen')) pedigree <- gen.add(pedigree)
 ped.trial <- pedigree[gen > 0L,]
 ped.trial <- ped.trial[, c(1L:3L)]
 setnames(ped.trial, c('TreeID','mum', 'dad'))
-pedigree <- pedigree[, c(1L:3L)]	
-ped.trial[, TreeID:= factor(TreeID, 
+pedigree <- pedigree[, c(1L:3L)]
+ped.trial[, TreeID:= factor(TreeID,
       levels = unique(TreeID))]
-form <- formula(~ TreeID -1) 
-termsf <- terms(form, keep.order = TRUE) 
+form <- formula(~ TreeID -1)
+termsf <- terms(form, keep.order = TRUE)
 mf <- model.frame(
-	    termsf, data=ped.trial, 
+	    termsf, data=ped.trial,
 	    na.action= na.pass)
 Zdata <- MatrixModels::model.Matrix(
 	       form, mf, sparse=TRUE)
 m <- dim(pedigree)[1L]
 n <- dim(ped.trial)[1L]
 Zbase <- zeros.matrix(
-	       n.rows=n, 
+	       n.rows=n,
 	       n.cols=m-n)
 Z <- cbind(Zbase, Zdata)
-Z@Dimnames[[2L]] <- c(paste0("TreeID", 
+Z@Dimnames[[2L]] <- c(paste0("TreeID",
 	  pedigree[[1L]]))
-Z@Dimnames[[1L]] <- c(paste0("TreeID", 
-	  ped.trial[[1L]])) 
-  return(Z)	  
-}  
+Z@Dimnames[[1L]] <- c(paste0("TreeID",
+	  ped.trial[[1L]]))
+  return(Z)
+}
 
 
 X.mat <- function(trial, effect, DP=TRUE){
 library(Matrix)
-library(MatrixModels)
+library(MatrixModels
 library(data.table)
   
 if (is.data.frame(trial)) {
       trial <- as.data.table(trial)
- } else if (is.matrix(trial)) { 
+ } else if (is.matrix(trial)) {
 	  trial <- as.data.table(trial)
  } else if (is.data.table(trial)) {
 	  trial <- trial
  } else {
-	  stop("nothing to do...")  
- }		  
+	  stop("nothing to do...")
+ }
 trial.tmp <- copy(trial)
 setnames(trial.tmp, 1, "ID")
-if(any(names(trial.tmp)== effect)) {	
-  j <- ifelse(effect== "gen.block", j <- 20L, 
-	   ifelse(effect== "gen", j <- 5L, 
-	   ifelse(effect== "Xtype",  j <- 7L, 
+if(any(names(trial.tmp)== effect)) {
+  j <- ifelse(effect== "gen.block", j <- 20L,
+	   ifelse(effect== "gen", j <- 5L,
+	   ifelse(effect== "Xtype",  j <- 7L,
 		 stop("\n effect must be named block or gen or XType \n"))))
 }
 col <- names(trial.tmp)[j]
 trial.tmp[, factor:= trial.tmp[, .SD, .SDcols = col]]
-trial.tmp[, factor:= factor(factor, 
+trial.tmp[, factor:= factor(factor,
   levels = unique(factor))]
-form <- formula(~ factor -1) 
-termsf <- terms(form, 
-  keep.order = TRUE) 
-mf <- model.frame(termsf, 
-  data= trial.tmp, 
+form <- formula(~ factor -1)
+termsf <- terms(form,
+  keep.order = TRUE)
+mf <- model.frame(termsf,
+  data= trial.tmp,
   na.action= na.pass)
 X <- MatrixModels::model.Matrix(
   form, mf, sparse=TRUE)
 X@Dimnames[[1L]] <- as.character(trial.tmp[, ID])
-X@Dimnames[[2L]] <- as.vector(as.matrix(trial.tmp[, 
+X@Dimnames[[2L]] <- as.vector(as.matrix(trial.tmp[,
   list(lev=levels(factor)), ]))
-  if(DP) {  
+  if(DP) {
     r <- dim(X)[2]
     X <- X[, seq(2, r), drop=FALSE]
     return(X)
   } else {
   	return(X)
-  }	
-} 
-
+  }
+}
+	
 X.mat0 <- function(trial){
-
 trial.tmp <- copy(trial)
 trial.tmp[, gen:= as.factor(gen)]
-form <- formula(~ gen -1) 
-termsf <- terms(form, keep.order = TRUE) 
-mf <- model.frame(termsf, 
-  data= trial.tmp, 
+form <- formula(~ gen -1)
+termsf <- terms(form, keep.order = TRUE)
+mf <- model.frame(termsf,
+  data= trial.tmp,
   na.action= na.pass)
 Zg <- MatrixModels::model.Matrix(
   form, mf, sparse=TRUE)
-Zg[is.na(Zg)] <- 0 
+Zg[is.na(Zg)] <- 0
 rownames(Zg) <- c(paste0("gen", trial[[5]]))
 r <- dim(Zg)[2]
 Zg <- Zg[, seq(2, r), drop=FALSE]  # remove first level to get n-1 level of the factor gen. Otherwise, C matrix is singular...!
 }
 
 
-# function to build the incidence matrix (Z.dom) relating an individual in the pedigree to its family (if it proceeds) 
+# function to build the incidence matrix (Z.dom) relating an individual in the pedigree to its family (if it proceeds)
 Z.dom <-function(pedigree, init.ghost=NULL){
 library(Matrix)
 library(MatrixModels)
@@ -536,43 +531,43 @@ library(data.table)
  
    if (is.data.frame(pedigree)) {
       pedigree <- as.data.table(pedigree)
-   } else if (is.matrix(pedigree)) { 
+   } else if (is.matrix(pedigree)) {
 	  pedigree <- as.data.table(pedigree)
    } else if (is.data.table(pedigree)) {
 	  pedigree <- as.data.table(pedigree)
    } else {
-	  stop("nothing to do...")  
-   }	
-    pedi <- pedigree[, c(1L: 3L)]	
+	  stop("nothing to do...")
+   }
+    pedi <- pedigree[, c(1L: 3L)]
     setnames(pedi, c('TreeID','mum', 'dad'))
 	# copy() to avoid change on child data.table (datafam)
 	# affecting by parental data.table (pedigree)
-	datafam <- copy(pedi) 
+	datafam <- copy(pedi)
     #init.ghost <- datafam[mum==0L & dad==0L & TreeID >= 1e5,
-	#  .SD[which.min(TreeID)]][, TreeID] 
+	#  .SD[which.min(TreeID)]][, TreeID]
 	if(is.null(init.ghost)) init.ghost <- 1e6
-	datafam[dad < init.ghost, cross:= ifelse((mum==0L | dad==0L), 
-	  NA, 
-      paste(pmin(mum, dad), 
-	  pmax(mum, dad), 
+	datafam[dad < init.ghost, cross:= ifelse((mum==0L | dad==0L),
+	  NA,
+      paste(pmin(mum, dad),
+	  pmax(mum, dad),
 	  sep = "x"))]
-    datafam[, cross:= factor(cross, 
+    datafam[, cross:= factor(cross,
       levels = unique(cross))]
-    form <- formula(~ cross -1) 
-    termsf <- terms(form, 
-	  keep.order = TRUE) 
+    form <- formula(~ cross -1)
+    termsf <- terms(form,
+	  keep.order = TRUE)
     mf <- model.frame(
-	  termsf, 
-	  data=datafam, 
+	  termsf,
+	  data=datafam,
 	  na.action= na.pass)
     Zdom <- MatrixModels::model.Matrix(
 	  form, mf, sparse=TRUE)
-	Zdom <- as(Zdom, "sparseMatrix")   
-    Zdom@Dimnames[[1L]] <- c(paste0("TreeID", 
-	  pedigree[[1L]]))	
-	fam <- as.vector(unique(datafam[, cross]))  
+	Zdom <- as(Zdom, "sparseMatrix")
+    Zdom@Dimnames[[1L]] <- c(paste0("TreeID",
+	  pedigree[[1L]]))
+	fam <- as.vector(unique(datafam[, cross]))
 	Zdom@Dimnames[[2L]] <- fam[!is.na(fam)]
-  return(list(Zdom=Zdom, 
+  return(list(Zdom=Zdom,
               datafam=datafam))
 }  
 
@@ -583,34 +578,34 @@ library(Matrix)
 library(pedigree)
 
     makeAinv(pedigree)
-	output <- fread("Ainv.txt")	
-    setnames(output, 
-	  old = colnames(output), 
+	output <- fread("Ainv.txt")
+    setnames(output,
+	  old = colnames(output),
     new = c('x','y', 'ai'))
 	m <- dim(pedigree)[1L]
 	ux <- as.vector(unique(output[, x]))
-	idx <- base::order(ux) 
+	idx <- base::order(ux)
 	index.x <- data.table(x=ux, idx=idx)
 	output <- index.x[output, on=.(x=x)]
 	uy <- as.vector(unique(output[, y]))
-	idy <- base::order(uy) 
+	idy <- base::order(uy)
 	index.y <- data.table(y=uy, idy=idy)
 	output <- index.y[output, on=.(y=y)]
-	cols <- c('idx', 'idy') 
-    output[, (cols):= lapply(.SD, as.integer), 
-	  .SDcols= cols]	
-	Ainv <- (with(output, 
+	cols <- c('idx', 'idy')
+    output[, (cols):= lapply(.SD, as.integer),
+	  .SDcols= cols]
+	Ainv <- (with(output,
 			  Matrix::sparseMatrix(i=idx,
-			  j=idy, 
-			  x=ai, 
+			  j=idy,
+			  x=ai,
 			  dims=c(m, m),
-			  dimnames = list(pedigree[[1L]], 
-			  pedigree[[1L]]), 
-			  triangular = FALSE, 
-			  check = TRUE)))		  
+			  dimnames = list(pedigree[[1L]],
+			  pedigree[[1L]]),
+			  triangular = FALSE,
+			  check = TRUE)))
 	Ainv.s <- forceSymmetric(Ainv, uplo="L")
-	Ainv.s <- drop0(Ainv.s, tol = 1e-15, 
-			     is.Csparse = NA)		
+	Ainv.s <- drop0(Ainv.s, tol = 1e-15,
+			     is.Csparse = NA)
  return(Ainv.s)
 }
 
